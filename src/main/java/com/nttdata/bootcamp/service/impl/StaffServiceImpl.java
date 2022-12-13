@@ -40,14 +40,18 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public Mono<Active> saveStaff(Active dataStaff) {
-        Mono<Active> activeMono = Mono.empty();
+        /*Mono<Active> activeMono = Mono.empty();
 
         if(dataStaff.getTypeCustomer().equals("PERSONAL")){
             activeMono = this.findByCustomerStaff(dataStaff.getDni()).next();
         }
         return activeMono
                 .flatMap(__ -> Mono.<Active>error(new Error("The customer have a staff account")))
+                .switchIfEmpty(activeRepository.save(dataStaff));*/
+        Mono<Active> activeMono = findByAccountNumberStaff(dataStaff.getAccountNumber())
+                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta personal credito con numero " + dataStaff.getAccountNumber() + " YA EXISTE")))
                 .switchIfEmpty(activeRepository.save(dataStaff));
+        return activeMono;
     }
 
 

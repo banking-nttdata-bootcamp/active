@@ -40,7 +40,7 @@ public class CreditCardServiceImpl implements CreditCardService {
     @Override
     public Mono<Active> saveCreditCard(Active dataActiveCreditCard){
         Mono<Active> activeMono = findByAccountNumberCreditCard(dataActiveCreditCard.getAccountNumber())
-                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta activa credito con numero " + dataActiveCreditCard.getAccountNumber() + " YA EXISTE")))
+                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta  credito con numero " + dataActiveCreditCard.getAccountNumber() + " YA EXISTE")))
                 .switchIfEmpty(activeRepository.save(dataActiveCreditCard));
         return activeMono;
     }
