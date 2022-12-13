@@ -30,6 +30,7 @@ public class Active {
     private Boolean creditCard;
 
     private Number creditLimit;
+    private Number limitMovementsMonthly;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @CreatedDate
