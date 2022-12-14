@@ -1,7 +1,9 @@
 package com.nttdata.bootcamp.controller;
 
 import com.nttdata.bootcamp.entity.Active;
+import com.nttdata.bootcamp.entity.dto.BusinessAccountDto;
 import com.nttdata.bootcamp.service.BusinessService;
+import com.nttdata.bootcamp.util.Constant;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +52,21 @@ public class BusinessController {
     //Save active business
     @CircuitBreaker(name = "active", fallbackMethod = "fallBackGetBusiness")
     @PostMapping(value = "/saveBusiness")
-    public Mono<Active> saveBusiness(@RequestBody Active dataBusiness){
-        Mono.just(dataBusiness).doOnNext(t -> {
-
+    public Mono<Active> saveBusiness(@RequestBody BusinessAccountDto dataBusiness){
+        Active active= new Active();
+        Mono.just(active).doOnNext(t -> {
+                    t.setDni(dataBusiness.getDni());
+                    t.setTypeCustomer(Constant.BUSINESS_CUSTOMER);
+                    t.setAccountNumber(dataBusiness.getAccountNumber());
+                    t.setCreditLimit(dataBusiness.getCreditLimit());
                     t.setCreationDate(new Date());
                     t.setModificationDate(new Date());
+                    t.setStatus(Constant.ACTIVE_ACTIVE);
 
-                }).onErrorReturn(dataBusiness).onErrorResume(e -> Mono.just(dataBusiness))
+                }).onErrorReturn(active).onErrorResume(e -> Mono.just(active))
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
-        Mono<Active> activeMono = businessService.saveBusiness(dataBusiness);
+        Mono<Active> activeMono = businessService.saveBusiness(active);
         return activeMono;
     }
 

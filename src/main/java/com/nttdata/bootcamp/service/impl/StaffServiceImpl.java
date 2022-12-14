@@ -48,6 +48,9 @@ public class StaffServiceImpl implements StaffService {
         return activeMono
                 .flatMap(__ -> Mono.<Active>error(new Error("The customer have a staff account")))
                 .switchIfEmpty(activeRepository.save(dataStaff));*/
+        dataStaff.setBusiness(false);
+        dataStaff.setStaff(true);
+        dataStaff.setCreditCard(false);
         Mono<Active> activeMono = findByAccountNumberStaff(dataStaff.getAccountNumber())
                 .flatMap(__ -> Mono.<Active>error(new Error("La cuenta personal credito con numero " + dataStaff.getAccountNumber() + " YA EXISTE")))
                 .switchIfEmpty(activeRepository.save(dataStaff));

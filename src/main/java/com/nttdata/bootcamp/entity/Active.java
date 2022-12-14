@@ -31,6 +31,7 @@ public class Active {
 
     private Number creditLimit;
     private Number limitMovementsMonthly;
+    private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @CreatedDate

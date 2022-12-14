@@ -39,6 +39,9 @@ public class BusinessServiceImpl implements BusinessService {
 
     @Override
     public Mono<Active> saveBusiness(Active dataBusiness) {
+        dataBusiness.setBusiness(true);
+        dataBusiness.setStaff(false);
+        dataBusiness.setCreditCard(false);
         Mono<Active> activeMono= findByAccountNumberBusiness(dataBusiness.getAccountNumber())
                 .flatMap(__ -> Mono.<Active>error(new Error("La cuenta  empresarial con numero " + dataBusiness.getAccountNumber() + " YA EXISTE")))
                 .switchIfEmpty(activeRepository.save(dataBusiness));

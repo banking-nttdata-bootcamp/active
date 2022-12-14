@@ -1,7 +1,9 @@
 package com.nttdata.bootcamp.controller;
 
 import com.nttdata.bootcamp.entity.Active;
+import com.nttdata.bootcamp.entity.dto.CreditCardDto;
 import com.nttdata.bootcamp.service.CreditCardService;
+import com.nttdata.bootcamp.util.Constant;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +50,41 @@ public class CreditCardController {
 
     //Save active credit card
     @CircuitBreaker(name = "active", fallbackMethod = "fallBackGetCreditCard")
-    @PostMapping(value = "/saveCreditCard")
-    public Mono<Active> saveCreditCard(@RequestBody Active dataCreditCard){
-        Mono.just(dataCreditCard).doOnNext(t -> {
-
+    @PostMapping(value = "/saveStaffCreditCard")
+    public Mono<Active> saveStaffCreditCard(@RequestBody CreditCardDto dataCreditCard){
+        Active active= new Active();
+        Mono.just(active).doOnNext(t -> {
+                    t.setDni(dataCreditCard.getDni());
+                    t.setTypeCustomer(Constant.PERSONAL_CUSTOMER);
+                    t.setAccountNumber(dataCreditCard.getAccountNumber());
+                    t.setCreditLimit(dataCreditCard.getCreditLimit());
                     t.setCreationDate(new Date());
                     t.setModificationDate(new Date());
+                    t.setStatus(Constant.ACTIVE_ACTIVE);
 
-                }).onErrorReturn(dataCreditCard).onErrorResume(e -> Mono.just(dataCreditCard))
+                }).onErrorReturn(active).onErrorResume(e -> Mono.just(active))
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
-        Mono<Active> activeMono = creditCardService.saveCreditCard(dataCreditCard);
+        Mono<Active> activeMono = creditCardService.saveCreditCard(active);
+        return activeMono;
+    }
+    @CircuitBreaker(name = "active", fallbackMethod = "fallBackGetCreditCard")
+    @PostMapping(value = "/saveBusinessCreditCard")
+    public Mono<Active> saveBusinessCreditCard(@RequestBody CreditCardDto dataCreditCard){
+        Active active= new Active();
+        Mono.just(active).doOnNext(t -> {
+                    t.setDni(dataCreditCard.getDni());
+                    t.setTypeCustomer(Constant.BUSINESS_CUSTOMER);
+                    t.setAccountNumber(dataCreditCard.getAccountNumber());
+                    t.setCreditLimit(dataCreditCard.getCreditLimit());
+                    t.setCreationDate(new Date());
+                    t.setModificationDate(new Date());
+                    t.setStatus(Constant.ACTIVE_ACTIVE);
+
+                }).onErrorReturn(active).onErrorResume(e -> Mono.just(active))
+                .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
+
+        Mono<Active> activeMono = creditCardService.saveCreditCard(active);
         return activeMono;
     }
 

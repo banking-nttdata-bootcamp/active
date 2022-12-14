@@ -1,6 +1,8 @@
 package com.nttdata.bootcamp.controller;
 
 import com.nttdata.bootcamp.entity.Active;
+import com.nttdata.bootcamp.entity.dto.StaffAccountDto;
+import com.nttdata.bootcamp.util.Constant;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,16 +49,20 @@ public class StaffController {
 	//Save active staff
 	@CircuitBreaker(name = "active", fallbackMethod = "fallBackGetStaff")
 	@PostMapping(value = "/saveStaff")
-	public Mono<Active> saveStaff(@RequestBody Active dataStaff){
-		Mono.just(dataStaff).doOnNext(t -> {
-
-					t.setCreationDate(new Date());
-					t.setModificationDate(new Date());
-
-				}).onErrorReturn(dataStaff).onErrorResume(e -> Mono.just(dataStaff))
+	public Mono<Active> saveStaff(@RequestBody StaffAccountDto dataStaff){
+		Active active= new Active();
+		Mono.just(active).doOnNext(t -> {
+			t.setDni(dataStaff.getDni());
+			t.setTypeCustomer(Constant.PERSONAL_CUSTOMER);
+			t.setAccountNumber(dataStaff.getAccountNumber());
+			t.setCreditLimit(dataStaff.getCreditLimit());
+			t.setCreationDate(new Date());
+			t.setModificationDate(new Date());
+			t.setStatus(Constant.ACTIVE_ACTIVE);
+				}).onErrorReturn(active).onErrorResume(e -> Mono.just(active))
 				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
-		Mono<Active> activeMono = staffService.saveStaff(dataStaff);
+		Mono<Active> activeMono = staffService.saveStaff(active);
 		return activeMono;
 	}
 	@CircuitBreaker(name = "active", fallbackMethod = "fallBackGetStaff")
