@@ -43,7 +43,7 @@ public class BusinessServiceImpl implements BusinessService {
         dataBusiness.setStaff(false);
         dataBusiness.setCreditCard(false);
         Mono<Active> activeMono= findByAccountNumberBusiness(dataBusiness.getAccountNumber())
-                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta  empresarial con numero " + dataBusiness.getAccountNumber() + " YA EXISTE")))
+                .flatMap(__ -> Mono.<Active>error(new Error("The business account  " + dataBusiness.getAccountNumber() + " exists")))
                 .switchIfEmpty(activeRepository.save(dataBusiness));
         return activeMono;
     }
@@ -57,7 +57,7 @@ public class BusinessServiceImpl implements BusinessService {
             dataBusiness.setCreationDate(activeMono.block().getCreationDate());
             return activeRepository.save(dataBusiness);
         }catch (Exception e){
-            return Mono.<Active>error(new Error("La cuenta activa empresarial con numero " + dataBusiness.getAccountNumber() + " NO EXISTE"));
+            return Mono.<Active>error(new Error("The business account  " + dataBusiness.getAccountNumber() + " do not exists"));
         }
     }
 
@@ -67,7 +67,7 @@ public class BusinessServiceImpl implements BusinessService {
         try{
             return activeRepository.delete(activeMono.block());
         }catch (Exception e){
-            return Mono.<Void>error(new Error("La cuenta activa empresarial con numero \" + dataActive.getAccountNumber() + \" NO EXISTE"));
+            return Mono.<Void>error(new Error("The business account  \" + dataActive.getAccountNumber() + \" do not exists"));
         }
     }
 

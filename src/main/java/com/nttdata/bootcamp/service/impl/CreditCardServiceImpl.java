@@ -43,7 +43,7 @@ public class CreditCardServiceImpl implements CreditCardService {
         dataActiveCreditCard.setStaff(false);
         dataActiveCreditCard.setCreditCard(true);
         Mono<Active> activeMono = findByAccountNumberCreditCard(dataActiveCreditCard.getAccountNumber())
-                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta  credito con numero " + dataActiveCreditCard.getAccountNumber() + " YA EXISTE")))
+                .flatMap(__ -> Mono.<Active>error(new Error("The credit card " + dataActiveCreditCard.getAccountNumber() + " exist")))
                 .switchIfEmpty(activeRepository.save(dataActiveCreditCard));
         return activeMono;
     }
@@ -57,7 +57,7 @@ public class CreditCardServiceImpl implements CreditCardService {
             dataActiveCreditCard.setCreationDate(activeMono.block().getCreationDate());
             return activeRepository.save(dataActiveCreditCard);
         }catch (Exception e){
-            return Mono.<Active>error(new Error("La cuenta activa personal con numero " + dataActiveCreditCard.getAccountNumber() + " NO EXISTE"));
+            return Mono.<Active>error(new Error("The credit card " + dataActiveCreditCard.getAccountNumber() + " does not exists"));
         }
     }
 
@@ -67,7 +67,7 @@ public class CreditCardServiceImpl implements CreditCardService {
         try{
             return activeRepository.delete(activeMono.block());
         }catch (Exception e){
-            return Mono.<Void>error(new Error("La cuenta activa credito con numero " + accountNumber + " NO EXISTE"));
+            return Mono.<Void>error(new Error("The credit card " + accountNumber + " does not exists"));
         }
     }
 

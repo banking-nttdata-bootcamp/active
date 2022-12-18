@@ -52,7 +52,7 @@ public class StaffServiceImpl implements StaffService {
         dataStaff.setStaff(true);
         dataStaff.setCreditCard(false);
         Mono<Active> activeMono = findByAccountNumberStaff(dataStaff.getAccountNumber())
-                .flatMap(__ -> Mono.<Active>error(new Error("La cuenta personal credito con numero " + dataStaff.getAccountNumber() + " YA EXISTE")))
+                .flatMap(__ -> Mono.<Active>error(new Error("The personal credit card " + dataStaff.getAccountNumber() + " exists")))
                 .switchIfEmpty(activeRepository.save(dataStaff));
         return activeMono;
     }
@@ -67,7 +67,7 @@ public class StaffServiceImpl implements StaffService {
             dataStaff.setCreationDate(activeMono.block().getCreationDate());
             return activeRepository.save(dataStaff);
         }catch (Exception e){
-            return Mono.<Active>error(new Error("La cuenta activa personal con numero " + dataStaff.getAccountNumber() + " NO EXISTE"));
+            return Mono.<Active>error(new Error("The personal credit card " + dataStaff.getAccountNumber() + " does not exists"));
         }
     }
 
@@ -77,7 +77,7 @@ public class StaffServiceImpl implements StaffService {
         try{
             return activeRepository.delete(activeMono.block());
         }catch (Exception e){
-            return Mono.<Void>error(new Error("La cuenta activa personal con numero \" + dataActive.getAccountNumber() + \" NO EXISTE"));
+            return Mono.<Void>error(new Error("The personal credit card \" + dataActive.getAccountNumber() + \" does not exists"));
         }
     }
 
